@@ -1,0 +1,5 @@
+---
+# tasks file for nginx
+
+- include: task-Ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'

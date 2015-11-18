@@ -1,0 +1,36 @@
+---
+# http://docs.ansible.com/ansible/apt_repository_module.html
+- name: Add Nginx Official Repo - deb
+  apt_repository: repo='deb http://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx' state=present
+
+- name: Add Nginx Official Repo - deb-src
+  apt_repository: repo='deb-src http://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx' state=present
+
+# http://docs.ansible.com/ansible/apt_key_module.html
+- name: Add Nginx Official Repo - package signing key
+  apt_key: url=http://nginx.org/packages/keys/nginx_signing.key state=present
+
+#- name: Add Nginx Official Repo - ppa:nginx/stable
+#  apt_repository: repo='ppa:nginx/stable'
+
+- name: Install Nginx 
+  apt:
+    update_cache: yes
+    pkg: nginx
+    state: installed
+
+- name: Update Nginx User
+  lineinfile: dest=/etc/nginx/nginx.conf regexp='^(.*)user[\t\s]([^;]*);' line="user {{nginx_user}};"
+
+- name: List Nginx configure files
+  shell: ls -1 /etc/nginx/conf.d/
+  register: webserver_conf_files
+  when: nginx_remove_all_configure_files
+
+- name: Remove Nginx configure files
+  file: path=/etc/nginx/conf.d/{{ item }} state=absent
+  with_items: webserver_conf_files.stdout_lines
+  when: nginx_remove_all_configure_files
+
+- name: Update Nginx configure files
+  template: src=default.conf.j2 dest=/etc/nginx/conf.d/{{nginx_config_filename}}

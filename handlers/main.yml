@@ -1,0 +1,14 @@
+---
+# handlers file for nginx
+
+- name: update nginx repo
+  apt: update_cache=yes
+
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: test nginx config
+  shell: service nginx configtest
+  register: result
+  changed_when: "result.rc != 0"
+  always_run: yes

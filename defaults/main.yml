@@ -1,0 +1,11 @@
+---
+# defaults file for nginx
+nginx_user: www-data
+nginx_remove_all_configure_files: false
+nginx_config_filename: default.conf
+nginx_listen: 80
+nginx_server_name: localhost
+nginx_document_root: /usr/share/nginx/html
+nginx_document_root_index: index.html index.htm
+nginx_http_params: []
+nginx_root_params: []
